@@ -9,9 +9,10 @@ exports.up = function (knex) {
     table.uuid("emp_id").references("id").inTable("employee");
     table.string("item_name").notNullable();
     table.string("emp_name").notNullable();
-    table.enu("type", ["بيع", "شراء"]).notNullable();
+    table.enu("type", ["بيع", "شراء", "منصرف"]).notNullable();
     table.double("amount").notNullable();
     table.double("price").notNullable();
+    table.dateTime("date").notNullable();
     table.timestamps(true, true);
   });
 };

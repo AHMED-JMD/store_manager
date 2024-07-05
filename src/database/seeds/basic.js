@@ -56,6 +56,7 @@ exports.seed = async function (knex) {
       type: "بيع",
       price: 11200,
       amount: 8,
+      date: "2024-06-24",
     },
     {
       id: "2e028584-29b9-4dcc-ac23-887450df51c6",
@@ -66,6 +67,7 @@ exports.seed = async function (knex) {
       type: "بيع",
       price: 11220,
       amount: 6,
+      date: "2024-06-24",
     },
     {
       id: "2e028584-29b9-4dcc-ac23-887450df51c7",
@@ -76,6 +78,7 @@ exports.seed = async function (knex) {
       type: "شراء",
       price: 9850,
       amount: 5,
+      date: "2024-06-24",
     },
     {
       id: "2e028584-29b9-4dcc-ac23-887450df51c8",
@@ -86,6 +89,7 @@ exports.seed = async function (knex) {
       type: "بيع",
       price: 22100,
       amount: 100,
+      date: "2024-06-24",
     },
   ]);
 };
