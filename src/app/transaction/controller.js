@@ -1,11 +1,12 @@
 const Transaction = require("../../models/transaction");
 const Item = require("../../models/item");
 const Account = require("../../models/employee");
+const { totalCount } = require("./utils");
 
 module.exports = {
   add: async (req, res, next) => {
     try {
-      const { item_id, emp_id, type, amount, price, date } = req.body;
+      const { item_id, emp_id, type, amount, price, date, comment } = req.body;
 
       if (!(item_id && emp_id && type && amount && price)) {
         let err = new Error("الرجاء ادخال جميع الحقول");
@@ -22,9 +23,26 @@ module.exports = {
           item_name: item.name,
           emp_name: emp.name,
           type,
-          amount,
-          price,
+          amount: parseFloat(amount),
+          price: parseFloat(price),
+          date,
+          comment,
         });
+
+        //update account
+        if (type === "بيع") {
+          await Account.query()
+            .findById(emp_id)
+            .patch({
+              account: emp.account + parseFloat(amount * price),
+            });
+        } else {
+          await Account.query()
+            .findById(emp_id)
+            .patch({
+              account: emp.account - parseFloat(amount * price),
+            });
+        }
 
         res.json("added successfully");
       }
@@ -34,9 +52,12 @@ module.exports = {
   },
   getAll: async (req, res, next) => {
     try {
-      let trans = await Transaction.query().orderBy("createdAt");
+      let trans = await Transaction.query().orderBy("date", "DESC");
 
-      res.json(trans);
+      //get total incomes and outcomes
+      const totals = totalCount(trans);
+
+      res.json({ trans, totals });
     } catch (error) {
       next(error);
     }

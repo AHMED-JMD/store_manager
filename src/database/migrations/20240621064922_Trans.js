@@ -13,6 +13,7 @@ exports.up = function (knex) {
     table.double("amount").notNullable();
     table.double("price").notNullable();
     table.dateTime("date").notNullable();
+    table.string("comment");
     table.timestamps(true, true);
   });
 };
