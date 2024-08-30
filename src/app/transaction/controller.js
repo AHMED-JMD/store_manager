@@ -2,6 +2,7 @@ const Transaction = require("../../models/transaction");
 const Item = require("../../models/item");
 const Account = require("../../models/employee");
 const { totalCount } = require("./utils");
+const knex = require("knex");
 
 module.exports = {
   add: async (req, res, next) => {
@@ -52,7 +53,42 @@ module.exports = {
   },
   getAll: async (req, res, next) => {
     try {
-      let trans = await Transaction.query().orderBy("date", "DESC");
+      const { date } = req.query;
+
+      let trans = await Transaction.query().orderBy("createdAt", "DESC");
+
+      //get total incomes and outcomes
+      const totals = totalCount(trans);
+
+      res.json({ trans, totals });
+    } catch (error) {
+      next(error);
+    }
+  },
+  filter: async (req, res, next) => {
+    try {
+      const { start_date, end_date, item_id, emp_id } = req.body;
+
+      //get transactions
+      let trans;
+      trans = await knex("transactions").select(
+        knex.raw(
+          `SELECT *
+          FROM tbl
+          WHERE date <= IF(? IS NOT NULL, ?, '2999-12-31')
+          AND date >= IF(? IS NOT NULL, ?, '1000-01-01')
+          AND (? IS NULL OR col1 = ?)
+          AND (? IS NULL OR col2 = ?)
+          AND (? IS NULL OR col3 = ?)
+          AND (? IS NULL OR col4 = ?);`
+        )
+      );
+      // if (item_id && emp_id) {
+      //   trans = await Transaction.query()
+      //     .where("item_id", item_id)
+      //     .where("emp_id", emp_id)
+      //     .whereBetween("date", [start_date, end_date]);
+      // }
 
       //get total incomes and outcomes
       const totals = totalCount(trans);
