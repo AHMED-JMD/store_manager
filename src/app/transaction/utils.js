@@ -5,7 +5,7 @@ const totalCount = (trans) => {
   trans.forEach((element) => {
     if (element.type === "بيع") {
       inc_total += element.amount * element.price;
-    } else {
+    } else if (element.type === "شراء") {
       out_total += element.amount * element.price;
     }
   });

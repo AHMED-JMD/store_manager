@@ -165,7 +165,7 @@ module.exports = {
         next(err);
       } else {
         //find from db
-        let tran = await Transaction.query().deleteById(id);
+        await Transaction.query().deleteById(id);
 
         res.json("deleted successsfully");
       }
