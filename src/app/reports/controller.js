@@ -10,15 +10,16 @@ module.exports = {
       let item = await Item.query().where("name", item_name);
 
       let data = store_details(trans);
-
-      let sdg_amount = data.total_store * item[0].sellPrice;
+      // --- sdg_amount is = total stock value in sdg
+      let sdg_required = data.total_store * item[0].sellPrice;
 
       //send response
       res.json({
         total_sales: data.total_sales,
         total_store: data.total_store,
-        sdg_amount,
-        sdg_profit: data.sdg_amount + sdg_amount,
+        sdg_amount: sdg_required,
+        // sdg_profit is = total stock value - actuall required amount
+        sdg_profit: data.sdg_amount + sdg_required,
       });
     } catch (error) {
       next(error);

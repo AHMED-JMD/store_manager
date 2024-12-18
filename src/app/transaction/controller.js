@@ -71,24 +71,24 @@ module.exports = {
 
       //get transactions
       let trans;
-      trans = await knex("transactions").select(
-        knex.raw(
-          `SELECT *
-          FROM tbl
-          WHERE date <= IF(? IS NOT NULL, ?, '2999-12-31')
-          AND date >= IF(? IS NOT NULL, ?, '1000-01-01')
-          AND (? IS NULL OR col1 = ?)
-          AND (? IS NULL OR col2 = ?)
-          AND (? IS NULL OR col3 = ?)
-          AND (? IS NULL OR col4 = ?);`
-        )
-      );
-      // if (item_id && emp_id) {
-      //   trans = await Transaction.query()
-      //     .where("item_id", item_id)
-      //     .where("emp_id", emp_id)
-      //     .whereBetween("date", [start_date, end_date]);
-      // }
+      // trans = await knex("transactions").select(
+      //   knex.raw(
+      //     `SELECT *
+      //     FROM tbl
+      //     WHERE date <= IF(? IS NOT NULL, ?, '2999-12-31')
+      //     AND date >= IF(? IS NOT NULL, ?, '1000-01-01')
+      //     AND (? IS NULL OR col1 = ?)
+      //     AND (? IS NULL OR col2 = ?)
+      //     AND (? IS NULL OR col3 = ?)
+      //     AND (? IS NULL OR col4 = ?);`
+      //   )
+      // );
+      if (item_id && emp_id) {
+        trans = await Transaction.query()
+          .where("item_id", item_id)
+          .where("emp_id", emp_id)
+          .whereBetween("date", [start_date, end_date]);
+      }
 
       //get total incomes and outcomes
       const totals = totalCount(trans);
@@ -165,6 +165,17 @@ module.exports = {
         next(err);
       } else {
         //find from db
+        let tran = await Transaction.query().findById(id);
+        let emp = await Account.query().findById(tran.empId);
+
+        //update account
+        await Account.query()
+          .findById(tran.empId)
+          .patch({
+            account: emp.account - tran.amount * tran.price,
+          });
+
+        //delete tran
         await Transaction.query().deleteById(id);
 
         res.json("deleted successsfully");

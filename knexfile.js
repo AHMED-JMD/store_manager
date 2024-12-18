@@ -6,11 +6,11 @@ module.exports = {
   development: {
     client: "mysql2",
     connection: {
-      host: "127.0.0.1",
+      host: `${process.env.DBHOST}`,
       port: 3306,
-      user: "root",
-      password: "@Ahmed1a2b3c",
-      database: "store_db",
+      user: `${process.env.DBUSER}`,
+      password: `${process.env.DBPASSWORD}`,
+      database: `${process.env.DBURL}`,
     },
     migrations: {
       directory: "./src/database/migrations",
